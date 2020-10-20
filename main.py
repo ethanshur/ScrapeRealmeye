@@ -232,4 +232,12 @@ def calculateDPS(weapon, ring, armor, ability, stats):
     for i in stats:
         player_stats[i] = player_stats[i] + ring[i] + ability[i] + armor[i] + weapon["Stats"][i]
 
-parseWeapon("https://www.realmeye.com/wiki/pirate-king-s-cutlass")
+def parseAll():
+    all_equipables = {}
+    types = ["Weapons", "Armors", "Abilities", "Rings"]
+    for i in types:
+        all_equipables.add({i:{}})
+    all_equipables["Weapons"] = parseWeapons()
+    all_equipables["Armors"] = parseArmors()
+    all_equipables["Abilities"] = parseAbilities()
+    all_equipables["Rings"] = parseRings()
