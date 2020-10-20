@@ -7,7 +7,10 @@ def parseWeapon(URL):
     weaponParseReq = Request(URL, headers = {"User-Agent": "Mozilla/5.0"})
     weaponPage = urlopen(weaponParseReq).read()
     weaponSoup = bs.BeautifulSoup(weaponPage, "lxml")
-    weaponDict = {"Tier": -1, "Shots": -1, "Damage": -1, "Rate of Fire": 1.0, }
+    tempString = "https://www.realmeye.com/wiki/"
+    name = URL
+    name = name.replace(tempString, "")
+    weaponDict = {"Name": name.replace("-", " "),"Tier": -1, "Shots": -1, "Damage": -1, "Rate of Fire": 1.0}
     weapon = weaponSoup.getText().split("\n")
     for i in range(len(weapon) - 1):
         if weapon[i] == "Tier":
@@ -24,7 +27,6 @@ def parseWeapon(URL):
                 shotsParse = weapon[i + 1].split(" ")
             else:
                 shotsParse = weapon[i + 1].split(" ")
-            print(shotsParse[0])
             if (shotsParse[0].isdigit()):
                 weaponDict["Shots"] = int(shotsParse[0])
             else:
@@ -44,25 +46,26 @@ def parseWeapon(URL):
                 weaponDict["Rate of Fire"] = rofPull
             else:
                 raise ValueError
+    print(weaponDict)
     return weaponDict
 
 
 daggersDict = {"Tiered": {}, "UT": {}, "ST": {}}
-for j in URLarray:
-    req = Request('https://www.realmeye.com/wiki/' + j, headers={'User-Agent': 'Mozilla/5.0'})
-    webpage = urlopen(req).read()
-    soup = bs.BeautifulSoup(webpage, "lxml")
-    test = soup.findAll("a")
-    thisURL = "realmeye.com"
-    for i in test:
-        if (i.text == ""):
-            thisURL = thisURL + i.get("href")
-            if j == "daggers":
-                temp = parseWeapon(thisURL)
-                daggersDict[temp["Tier"]].add(temp)
-            if j == "bows":
+# for j in URLarray:
+#     req = Request('https://www.realmeye.com/wiki/' + j, headers={'User-Agent': 'Mozilla/5.0'})
+#     webpage = urlopen(req).read()
+#     soup = bs.BeautifulSoup(webpage, "lxml")
+#     test = soup.findAll("a")
+#     thisURL = "https://www.realmeye.com"
+#     for i in test:
+#         if (i.text == ""):
+#             thisURL = thisURL + i.get("href")
+#             if j == "daggers":
+#                 temp = parseWeapon(thisURL)
+#                 daggersDict[temp["Tier"]].add(temp)
+            #if j == "bows":
 
-            thisURL = "realmeye.com"
+            #thisURL = "realmeye.com"
 #weaponDict = {"Daggers": daggersDict, "Bows": bowsDict, "Staves": stavesDict, "Wands": wandsDict, "Katanas": katanasDict}
 dict = {}
 
