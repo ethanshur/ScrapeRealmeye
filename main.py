@@ -8,15 +8,15 @@ def parseWeapon(URL):
 
     tempString = "https://www.realmeye.com/wiki/"
     name = URL
-    name = name.replace(tempString, "")
 
+    name = name.replace(tempString, "")
+    print(name)
     img = weaponSoup.findAll("img")
     imgURL = ""
     for j in range(len(img)):
         if img[j].get("alt").replace(" ", "-").lower() == name:
             imgURL = "https:" + img[j].get("src")
             break
-
     weaponDict = {"Name": name.replace("-", " "),"Img": imgURL, "Tier": -1, "Shots": -1, "Damage": -1, "Rate of Fire": 1.0}
     weapon = weaponSoup.getText().split("\n")
     for i in range(len(weapon) - 1):
@@ -53,6 +53,27 @@ def parseWeapon(URL):
                 weaponDict["Rate of Fire"] = rofPull
             else:
                 raise ValueError
+        elif weapon[i] == "On Equip":
+            statsDict = {"HP": 0, "MP": 0, "ATT": 0, "DEF": 0, "DEX": 0, "SPD": 0, "WIS": 0, "VIT": 0}
+            stats = weapon[i + 1].split(",")
+            for j in range(len(stats)):
+                if "HP" in stats[j]:
+                    statsDict["HP"] = float(stats[j].replace(" HP", ""))
+                elif "MP" in stats[j]:
+                    statsDict["MP"] = float(stats[j].replace(" MP", ""))
+                elif "ATT" in stats[j]:
+                    statsDict["ATT"] = float(stats[j].replace(" ATT", ""))
+                elif "DEF" in stats[j]:
+                    statsDict["DEF"] = float(stats[j].replace(" DEF", ""))
+                elif "DEX" in stats[j]:
+                    statsDict["DEX"] = float(stats[j].replace(" DEX", ""))
+                elif "SPD" in stats[j]:
+                    statsDict["SPD"] = float(stats[j].replace(" SPD", ""))
+                elif "WIS" in stats[j]:
+                    statsDict["WIS"] = float(stats[j].replace(" WIS", ""))
+                elif "VIT" in stats[j]:
+                    statsDict["VIT"] = float(stats[j].replace(" VIT", ""))
+            weaponDict["Stats"] = statsDict
     print(weaponDict)
     return weaponDict
 
@@ -205,3 +226,10 @@ def parseRings():
                 else:
                     rings_dict[val][temp["Tier"]]["Tiered"] = temp
     return rings_dict
+
+def calculateDPS(weapon, ring, armor, ability, stats):
+    player_stats = stats
+    for i in stats:
+        player_stats[i] = player_stats[i] + ring[i] + ability[i] + armor[i] + weapon["Stats"][i]
+
+parseWeapon("https://www.realmeye.com/wiki/pirate-king-s-cutlass")
