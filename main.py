@@ -1,8 +1,6 @@
 import bs4 as bs
 from urllib.request import Request, urlopen
 
-URLarray = ["daggers", "bows", "staves", "wands", "swords", "katanas"]
-
 def parseWeapon(URL):
     weaponParseReq = Request(URL, headers = {"User-Agent": "Mozilla/5.0"})
     weaponPage = urlopen(weaponParseReq).read()
@@ -49,28 +47,22 @@ def parseWeapon(URL):
     print(weaponDict)
     return weaponDict
 
-
-daggersDict = {"Tiered": {}, "UT": {}, "ST": {}}
-# for j in URLarray:
-#     req = Request('https://www.realmeye.com/wiki/' + j, headers={'User-Agent': 'Mozilla/5.0'})
-#     webpage = urlopen(req).read()
-#     soup = bs.BeautifulSoup(webpage, "lxml")
-#     test = soup.findAll("a")
-#     thisURL = "https://www.realmeye.com"
-#     for i in test:
-#         if (i.text == ""):
-#             thisURL = thisURL + i.get("href")
-#             if j == "daggers":
-#                 temp = parseWeapon(thisURL)
-#                 daggersDict[temp["Tier"]].add(temp)
-            #if j == "bows":
-
-            #thisURL = "realmeye.com"
-#weaponDict = {"Daggers": daggersDict, "Bows": bowsDict, "Staves": stavesDict, "Wands": wandsDict, "Katanas": katanasDict}
-dict = {}
-
-parseWeapon("https://www.realmeye.com/wiki/agateclaw-dagger")
-parseWeapon("https://www.realmeye.com/wiki/avarice")
-parseWeapon("https://www.realmeye.com/wiki/dirk-of-cronus")
-parseWeapon("https://www.realmeye.com/wiki/bow-of-deep-enchantment")
-parseWeapon("https://www.realmeye.com/wiki/bow-of-the-morning-star")
+def parseWeapons():
+    URLarray = ["daggers", "bows", "staves", "wands", "swords", "katanas"]
+    weapons_dict = {}
+    for i in URLarray :
+        weapons_dict.add({i: {}})
+    for j in URLarray:
+        req = Request('https://www.realmeye.com/wiki/' + j, headers={'User-Agent': 'Mozilla/5.0'})
+        webpage = urlopen(req).read()
+        soup = bs.BeautifulSoup(webpage, "lxml")
+        test = soup.findAll("a")
+        thisURL = "https://www.realmeye.com"
+        for i in test:
+            if (i.text == ""):
+                thisURL = thisURL + i.get("href")
+                temp = parseWeapon(thisURL)
+                if (temp["Tier"] is "UT" | temp["Tier"] is "ST"):
+                    weapons_dict[j][temp["Tier"]][temp["Name"]] = temp
+                else:
+                    weapons_dict[j][temp["Tier"]]["Tiered"] = temp
